@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { wait } from './wait.js'
+import * as github from '@actions/github'
 
 /**
  * The main function for the action.
@@ -8,18 +8,46 @@ import { wait } from './wait.js'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const token = core.getInput('github-token', { required: true })
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const { payload, repo } = github.context
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    if (!payload.issue) {
+      core.debug('No issue found in the event payload. Skipping.')
+      return
+    }
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    const issue = payload.issue
+
+    if (issue.labels && issue.labels.length > 0) {
+      core.info(
+        `Issue #${issue.number} has ${issue.labels.length} label(s). No action needed.`
+      )
+      return
+    }
+
+    core.info(`Issue #${issue.number} has no labels. Closing with a message.`)
+
+    const octokit = github.getOctokit(token)
+
+    const author = issue.user?.login ?? 'there'
+
+    await octokit.rest.issues.createComment({
+      owner: repo.owner,
+      repo: repo.repo,
+      issue_number: issue.number,
+      body: `Hi @${author}, thanks for opening an issue.\n\nIt looks like you did not use one of the provided issue forms when creating this issue.\nTo help us triage and respond efficiently, please open a new issue using one of the available issue forms.\n\nThis issue is being closed automatically.`
+    })
+
+    await octokit.rest.issues.update({
+      owner: repo.owner,
+      repo: repo.repo,
+      issue_number: issue.number,
+      state: 'closed',
+      state_reason: 'not_planned'
+    })
+
+    core.info(`Issue #${issue.number} has been closed.`)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

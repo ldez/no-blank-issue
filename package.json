@@ -1,17 +1,17 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
+  "name": "no-blank-issue",
+  "description": "Closes newly opened issues that have no labels, indicating that the issue forms have not been used.",
+  "version": "1.0.0",
+  "author": "ldez",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/ldez/no-blank-issue",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/ldez/no-blank-issue.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/ldez/no-blank-issue/issues"
   },
   "keywords": [
     "actions"

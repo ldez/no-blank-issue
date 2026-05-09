@@ -1,23 +1,18 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: no-blank-issue
+description: >
+  Closes newly opened issues that have no labels, indicating that the issue
+  forms have not been used.
+author: ldez
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: heart
+  icon: tag
   color: red
 
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  github-token:
+    description: GitHub token for API calls.
     required: true
-    default: '1000'
-
-# Define your outputs here.
-outputs:
-  time:
-    description: Your output description here
+    default: ${{ github.token }}
 
 runs:
   using: node24
