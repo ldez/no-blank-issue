@@ -3,7 +3,6 @@ description: >
   Closes newly opened issues that have no labels, indicating that the issue
   forms have not been used.
 author: ldez
-
 branding:
   icon: tag
   color: red
